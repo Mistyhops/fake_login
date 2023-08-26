@@ -5,6 +5,7 @@ import uuid
 import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
 from schemas import LoginRequest, UserObj, LoginResponse
 
@@ -48,16 +49,19 @@ async def say_hello(name: str):
 def fake_login(
         request: LoginRequest
 ):
+    token = get_token()
     user = UserObj(
         email='some_email@example.com',
         person=uuid.uuid4(),
         company_id='d7a2f439-9600-4b64-ae31-d451362b8551',
     )
     data = LoginResponse(
-        token=get_token(),
+        token=token,
         user=user
     )
-    return data
+    response = JSONResponse(content=data, status_code=200)
+    response.set_cookie(key='login_token', value=token)
+    return response
 
 
 if __name__ == "__main__":
