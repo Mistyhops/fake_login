@@ -4,6 +4,7 @@ import uuid
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
@@ -59,8 +60,9 @@ def fake_login(
         token=token,
         user=user
     )
-    response = JSONResponse(content=data, status_code=200)
-    response.set_cookie(key='login_token', value=token)
+    response = JSONResponse(content=jsonable_encoder(data), status_code=200)
+    response.set_cookie(key='clo_per_token', value=token)
+    response.set_cookie(key='cl_t', value=token)
     return response
 
 
